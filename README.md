@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏎️ Generador de Páginas Premium (GIBRA)
 
-## Getting Started
+Una plataforma SaaS moderna y modular tipo "Page Builder" diseñada para visualizar y detallar vehículos de distintas marcas de manera interactiva. Permite a los usuarios crear landing pages excepcionales sin tocar una sola línea de código, usando una interfaz muy intuitiva.
 
-First, run the development server:
+## 🚀 Características Principales
+
+- **Constructores Modulares:** Interfaz visual para añadir bloques (Hero de Vehículo, Galería, Especificaciones).
+- **Subida a la Nube (AWS/Firebase):** El usuario sube las fotos desde su PC e instantáneamente son almacenadas en Firebase Storage y previsualizadas en el lienzo.
+- **Renderizado Dinámico:** Cada página creada se guarda como un esquema JSON en MongoDB y es parseada bajo la URL orientada a SEO: `/[marca]/[slug]`.
+- **Panel de Autenticación Premium:** Protegido con Clerk, los usuarios tienen un Dashboard personal donde listan, publican o re-editan sus vehículos.
+
+## 🛠️ Stack Tecnológico
+
+- **Framework Front/Back:** [Next.js 16](https://nextjs.org/) (App Router & Server Actions)
+- **Base de Datos:** [MongoDB](https://www.mongodb.com/) gestionada con `mongoose`.
+- **Almacenamiento de Fotos:** [Firebase Storage](https://firebase.google.com/).
+- **Autenticación:** [Clerk](https://clerk.com/) Middleware / Autenticación de Múltiples factores.
+- **Diseños y Estilos:** Vanilla Tailwind + Extensiones (`clsx`, `tailwind-merge`), Lucide React Icons.
+
+## 💻 Instalación Local
+
+1. Clona este repositorio o ubícate en la carpeta del proyecto.
+2. Instala todas las dependencias del proyecto ejecutando:
+
+```bash
+npm install
+```
+
+3. Cerciórate de tener el archivo `.env` configurado.
+4. Levanta el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Visita `http://localhost:3000` en tu navegador para ver la magia y logueate para acceder al Dashboard privado.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Estructura del Código
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`app/`**: Enrutador principal.
+  - `(auth)`: Manejo de login y registro.
+  - `builder/[id]`: Entorno visual para armar las páginas modulares arrastrando bloques.
+  - `dashboard/`: Panel del usuario e interfaz de "Nueva Página".
+  - `api/`: Controladores backend de páginas con llamadas seguras y JSON estructurado.
+- **`components/page-modules/`**: Componentes visuales "Bloques", como el *HeroSection*. Todo bloque que se cree aquí, podrá ser interpretado por el `ModuleRenderer.tsx`.
+- **`lib/`**: Archivos de infraestructura (MongoDB singleton, UI helpers y utilidades de Firebase).
+- **`models/`**: Esquemas de Mongoose para normalizar la data de la DB.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+_Creado con visión modular y estética UI/UX premium._
