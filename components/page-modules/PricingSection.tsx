@@ -1,5 +1,5 @@
 export function PricingSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
-  const { title, description, price, disclaimer, bgColor, textColor } = data || {};
+  const { title, description, price, disclaimer, bgColor, textColor, accentColor } = data || {};
 
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#09090b' : '#ffffff';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -8,10 +8,16 @@ export function PricingSection({ data, template = "luxury_minimal" }: { data: an
   const resolveTextColor = textColor || defaultText;
 
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full py-20 px-6 border-t-[16px] border-black" style={backgroundStyle}>
+      <section className="w-full py-20 px-6 border-t-[16px] border-black" style={sectionStyle}>
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between p-8 bg-zinc-950 border border-zinc-800 shadow-2xl relative overflow-hidden">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[var(--accent)] to-transparent" />
           
           <div className="md:w-1/2 text-left z-10 space-y-2">
             <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase" style={{ color: resolveTextColor }}>
@@ -23,7 +29,7 @@ export function PricingSection({ data, template = "luxury_minimal" }: { data: an
           </div>
           
           <div className="md:w-1/2 z-10 flex flex-col items-center md:items-end mt-8 md:mt-0">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-red-600 text-white px-3 py-1 mb-2">Precio Inicial</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-[var(--accent)] text-white px-3 py-1 mb-2">Precio Inicial</span>
             <div className="text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter" style={{ color: resolveTextColor }}>
               {price || "$ 150,000"}
             </div>

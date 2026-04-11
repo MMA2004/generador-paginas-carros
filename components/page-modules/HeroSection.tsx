@@ -1,5 +1,5 @@
 export function HeroSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
-  const { title, subtitle, imageUrl, ctaText, bgColor, textColor } = data || {};
+  const { title, subtitle, imageUrl, ctaText, bgColor, textColor, accentColor } = data || {};
 
   const hasImage = !!imageUrl;
   
@@ -9,19 +9,26 @@ export function HeroSection({ data, template = "luxury_minimal" }: { data: any, 
 
   const backgroundStyle = bgColor ? { backgroundColor: bgColor } : { backgroundColor: defaultBg };
   const resolveTextColor = textColor || defaultText;
+  const resolveAccent = accentColor || '#dc2626';
+
   if (template === "sport_dynamic") {
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
       <section 
         className="relative w-full h-[80vh] min-h-[600px] flex items-end justify-start overflow-hidden pt-20 pb-24 px-8 md:px-16"
-        style={backgroundStyle}
+        style={sectionStyle}
       >
         {imageUrl ? (
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105" style={{ backgroundImage: `url(${imageUrl})` }} />
         ) : (
           <>
             <div className={`absolute inset-0 bg-gradient-to-tr ${!bgColor ? 'from-black via-zinc-900 to-black' : ''}`} style={backgroundStyle} />
-            <div className="absolute -right-20 -top-20 w-96 h-96 bg-red-600/20 blur-3xl rounded-full" />
-            <div className="absolute top-1/2 -left-20 w-[120%] h-32 bg-red-600/10 -skew-y-6" />
+            <div className="absolute -right-20 -top-20 w-96 h-96 bg-[var(--accent)] opacity-20 blur-3xl rounded-full" />
+            <div className="absolute top-1/2 -left-20 w-[120%] h-32 bg-[var(--accent)] opacity-10 -skew-y-6" />
           </>
         )}
         
@@ -40,7 +47,7 @@ export function HeroSection({ data, template = "luxury_minimal" }: { data: any, 
           
           {subtitle && (
             <div className="flex items-center mt-2 gap-4">
-              <div className="w-12 h-1.5 bg-red-600" />
+              <div className="w-12 h-1.5 bg-[var(--accent)]" />
               <p 
                 className="text-lg md:text-2xl font-bold tracking-widest uppercase"
                 style={{ color: resolveTextColor, opacity: 0.9 }}
@@ -53,9 +60,9 @@ export function HeroSection({ data, template = "luxury_minimal" }: { data: any, 
           {ctaText && (
             <div className="mt-10">
               <button 
-                className="rounded-none px-10 py-4 text-sm font-black uppercase tracking-widest border-2 transition-all hover:bg-white hover:text-black hover:border-white"
+                className="rounded-none px-10 py-4 text-sm font-black uppercase tracking-widest border-2 transition-all hover:!bg-white hover:!text-black hover:!border-white"
                 style={{
-                  backgroundColor: textColor ? "transparent" : "rgba(255,0,0,0.8)",
+                  backgroundColor: textColor ? "transparent" : "var(--accent)",
                   borderColor: resolveTextColor,
                   color: resolveTextColor
                 }}

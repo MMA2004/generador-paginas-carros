@@ -1,5 +1,5 @@
 export function FeatureSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
-  const { title, description, imageUrl, imagePosition = "left", bgColor, textColor } = data || {};
+  const { title, description, imageUrl, imagePosition = "left", bgColor, textColor, accentColor } = data || {};
 
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#09090b' : '#ffffff';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -10,13 +10,19 @@ export function FeatureSection({ data, template = "luxury_minimal" }: { data: an
   const isLeft = imagePosition === "left";
 
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full relative overflow-hidden" style={backgroundStyle}>
+      <section className="w-full relative overflow-hidden" style={sectionStyle}>
         <div className={`flex flex-col ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} min-h-[500px]`}>
           
           {/* Image Side */}
           <div className="w-full md:w-1/2 relative bg-zinc-900 overflow-hidden">
-            <div className={`absolute inset-0 bg-red-600/10 z-10 mix-blend-overlay ${isLeft ? 'translate-x-12 skew-x-12' : '-translate-x-12 -skew-x-12'}`} />
+            <div className={`absolute inset-0 bg-[var(--accent)] opacity-10 z-10 mix-blend-overlay ${isLeft ? 'translate-x-12 skew-x-12' : '-translate-x-12 -skew-x-12'}`} />
             {imageUrl ? (
               <img src={imageUrl} alt={title || "Feature"} className="w-full h-full object-cover absolute inset-0" />
             ) : (
@@ -29,7 +35,7 @@ export function FeatureSection({ data, template = "luxury_minimal" }: { data: an
           {/* Text Side */}
           <div className="w-full md:w-1/2 flex items-center p-12 md:p-20 relative z-20">
             <div className="max-w-md">
-              <div className="w-12 h-1.5 bg-red-600 mb-6 skew-x-12" />
+              <div className="w-12 h-1.5 bg-[var(--accent)] mb-6 skew-x-12" />
               <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase mb-6" style={{ color: resolveTextColor }}>
                 {title || "Innovación Absoluta"}
               </h2>

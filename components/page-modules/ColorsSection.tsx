@@ -1,6 +1,6 @@
 export function ColorsSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
   const colors: { label: string; hexCode: string }[] = data?.colors || [];
-  const { title, description, bgColor, textColor } = data || {};
+  const { title, description, bgColor, textColor, accentColor } = data || {};
 
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#000000' : '#f9fafb';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -18,14 +18,20 @@ export function ColorsSection({ data, template = "luxury_minimal" }: { data: any
   }
 
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full py-16 px-6" style={backgroundStyle}>
+      <section className="w-full py-16 px-6" style={sectionStyle}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-center">
           <div className="md:w-1/3 shrink-0 text-center md:text-left">
             <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-2" style={{ color: resolveTextColor }}>
               {title || "Gama de Pintura"}
             </h2>
-            <div className="w-12 h-1 bg-red-600 mx-auto md:mx-0 mb-4" />
+            <div className="w-12 h-1 bg-[var(--accent)] mx-auto md:mx-0 mb-4" />
             <p className="text-sm tracking-widest uppercase font-bold" style={{ color: resolveTextColor, opacity: 0.6 }}>
               {description || "Cobertura de alto octanaje."}
             </p>

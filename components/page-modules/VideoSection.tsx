@@ -1,5 +1,5 @@
 export function VideoSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
-  const { title, videoUrl, bgColor, textColor } = data || {};
+  const { title, videoUrl, bgColor, textColor, accentColor } = data || {};
 
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#000000' : '#ffffff';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -35,19 +35,25 @@ export function VideoSection({ data, template = "luxury_minimal" }: { data: any,
   };
 
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full px-4 py-20" style={backgroundStyle}>
+      <section className="w-full px-4 py-20" style={sectionStyle}>
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-8">
             <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase" style={{ color: resolveTextColor }}>
               {title || "En Movimiento"}
             </h2>
-            <div className="hidden md:block w-32 h-1.5 bg-red-600 skew-x-12" />
+            <div className="hidden md:block w-32 h-1.5 bg-[var(--accent)] skew-x-12" />
           </div>
           
           <div className="w-full aspect-video p-2 md:p-4 bg-zinc-950 border border-zinc-800 shadow-2xl relative">
-            <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-red-600" />
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-red-600" />
+            <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-[var(--accent)]" />
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-[var(--accent)]" />
             <VideoIframe />
           </div>
         </div>

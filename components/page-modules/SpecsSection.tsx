@@ -2,7 +2,7 @@ import { DynamicIcon } from "@/components/ui/icon-picker";
 
 export function SpecsSection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
   const specs: { label: string; value: string; icon?: string }[] = data?.specs || [];
-  const { bgColor, textColor } = data || {};
+  const { bgColor, textColor, accentColor } = data || {};
   
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#000000' : '#f9fafb';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -22,10 +22,16 @@ export function SpecsSection({ data, template = "luxury_minimal" }: { data: any,
   }
 
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full py-12 px-4" style={backgroundStyle}>
+      <section className="w-full py-12 px-4" style={sectionStyle}>
         <div className="max-w-7xl mx-auto border border-zinc-800 bg-zinc-950 p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 justify-between shadow-2xl">
-          <div className="md:w-1/4 shrink-0 border-l-4 border-red-600 pl-4">
+          <div className="md:w-1/4 shrink-0 border-l-4 border-[var(--accent)] pl-4">
             <h2 className="text-xl md:text-2xl font-black italic tracking-tighter uppercase" style={{ color: resolveTextColor }}>
               {data.title || "Datos Técnicos"}
             </h2>
@@ -37,7 +43,7 @@ export function SpecsSection({ data, template = "luxury_minimal" }: { data: any,
           <div className="flex-1 flex flex-wrap gap-x-12 gap-y-8 justify-center md:justify-end">
             {specs.map((spec, i) => (
               <div key={i} className="flex flex-col items-center text-center w-24">
-                <DynamicIcon name={spec.icon || "Asterisk"} className="w-6 h-6 mb-2 text-red-500" />
+                <DynamicIcon name={spec.icon || "Asterisk"} className="w-6 h-6 mb-2 text-[var(--accent)]" />
                 <span className="text-2xl font-bold tracking-tighter" style={{ color: resolveTextColor }}>{spec.value}</span>
                 <span className="text-[9px] uppercase tracking-widest mt-1 font-bold" style={{ color: resolveTextColor, opacity: 0.6 }}>{spec.label}</span>
               </div>

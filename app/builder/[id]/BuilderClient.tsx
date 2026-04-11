@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { type IPageBlock } from "@/models/Page";
 import { ModuleRenderer } from "@/components/page-modules/ModuleRenderer";
-import { ArrowLeft, Save, Layout, Settings, Eye, Plus, Trash2, Loader2, ImagePlus, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft, Save, Layout, Settings, Eye, Plus, Trash2, Loader2, ImagePlus, ChevronUp, ChevronDown, AlertTriangle, CheckCircle, XCircle, Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
@@ -24,6 +24,13 @@ export function BuilderClient({ initialData }: { initialData: any }) {
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [savedState, setSavedState] = useState({ blocks: initialData.blocks || [], template: initialData.template || "luxury_minimal" });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{title: string, description: string, onConfirm: () => void} | null>(null);
+  const [toast, setToast] = useState<{msg: string, type: 'success'|'error'|'info'} | null>(null);
+
+  const showToast = (msg: string, type: 'success'|'error'|'info' = 'info') => {
+    setToast({msg, type});
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     const isDirty = JSON.stringify(blocks) !== JSON.stringify(savedState.blocks) || template !== savedState.template;
@@ -44,9 +51,14 @@ export function BuilderClient({ initialData }: { initialData: any }) {
 
   const handleBack = () => {
     if (hasUnsavedChanges) {
-      if (!window.confirm("Tienes cambios sin guardar que se perderán. ¿Estás seguro que deseas salir?")) return;
+      setConfirmDialog({
+        title: "Cambios sin guardar",
+        description: "Tienes ajustes de diseño y bloques que se perderán si sales ahora. ¿Estás seguro de abandonar esta página?",
+        onConfirm: () => router.push("/dashboard")
+      });
+    } else {
+      router.push("/dashboard");
     }
-    router.push("/dashboard"); // Ajustar si hay otra ruta de escape
   };
 
   const sensors = useSensors(
@@ -134,10 +146,10 @@ export function BuilderClient({ initialData }: { initialData: any }) {
       });
       if (!res.ok) throw new Error("Error saving");
       setSavedState({ blocks, template });
-      alert("Página guardada exitosamente");
+      showToast("Página guardada exitosamente", "success");
     } catch (err) {
       console.error(err);
-      alert("Hubo un problema guardando. Ver consola.");
+      showToast("Hubo un problema guardando. Ver consola.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -153,8 +165,9 @@ export function BuilderClient({ initialData }: { initialData: any }) {
       
       const url = await uploadFileToFirebase(file, `pages-uploads/${initialData._id}`);
       updateBlockData(selectedBlockId, fieldName, url);
+      showToast("Imagen subida con éxito", "success");
     } catch (error) {
-      alert("Error subiendo la imagen a Firebase Storage. Verifica tus credenciales.");
+      showToast("Error subiendo la imagen al Storage.", "error");
       console.error(error);
     } finally {
       setUploadingImage(false);
@@ -185,8 +198,9 @@ export function BuilderClient({ initialData }: { initialData: any }) {
         const currentImages = block.data.images || [];
         updateBlockData(selectedBlockId, "images", [...currentImages, url]);
       }
+      showToast("Imagen agregada a la galería", "success");
     } catch (error) {
-      alert("Error subiendo la imagen.");
+      showToast("Error subiendo la imagen.", "error");
     } finally {
       setUploadingImage(false);
       e.target.value = '';
@@ -258,7 +272,51 @@ export function BuilderClient({ initialData }: { initialData: any }) {
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
 
   return (
-    <div className="flex w-full h-screen bg-zinc-950 text-white overflow-hidden">
+    <div className="flex w-full h-screen bg-zinc-950 text-white overflow-hidden relative">
+      
+      {/* --- Custom Modal Dialog (Sustituto Premium de alert/confirm nativos) --- */}
+      {confirmDialog && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-zinc-950 border border-zinc-800 p-8 rounded-3xl w-full max-w-sm shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            <div className="bg-amber-500/10 text-amber-500 p-4 rounded-full mb-6">
+              <AlertTriangle size={36} />
+            </div>
+            <h3 className="text-xl font-black italic tracking-tighter text-white mb-2 uppercase">{confirmDialog.title}</h3>
+            <p className="text-zinc-400 text-xs tracking-wider mb-8 leading-relaxed uppercase">
+              {confirmDialog.description}
+            </p>
+            <div className="flex flex-col md:flex-row gap-3 w-full">
+              <button 
+                onClick={() => setConfirmDialog(null)} 
+                className="flex-1 py-3 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} 
+                className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+              >
+                Salir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- Toast Notifications Premium --- */}
+      {toast && (
+        <div className="fixed bottom-8 right-8 z-[100] animate-in slide-in-from-bottom-5 duration-300">
+          <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl border shadow-xl ${
+            toast.type === 'success' ? 'bg-emerald-950/80 border-emerald-900/50 text-emerald-400 backdrop-blur' :
+            toast.type === 'error' ? 'bg-red-950/80 border-red-900/50 text-red-500 backdrop-blur' : 
+            'bg-zinc-900/90 border-zinc-800 text-zinc-300 backdrop-blur'
+          }`}>
+            {toast.type === 'success' ? <CheckCircle size={20} /> : toast.type === 'error' ? <XCircle size={20} /> : <Info size={20} />}
+            <span className="text-xs font-bold uppercase tracking-widest leading-none mt-0.5">{toast.msg}</span>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside className="w-80 border-r border-white/10 bg-zinc-900/50 flex flex-col h-full shrink-0">
         <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 shrink-0 bg-black">
@@ -435,7 +493,7 @@ export function BuilderClient({ initialData }: { initialData: any }) {
                   </div>
                   
                   {/* Universal Styling */}
-                  <div className="grid grid-cols-2 gap-4 pb-4 border-b border-zinc-800/50">
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 pb-4 border-b border-zinc-800/50">
                     <div className="space-y-1.5 pt-1">
                        <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Color Fondo</label>
                        <div className="flex h-9 w-full rounded-md border border-zinc-800 bg-black overflow-hidden pr-3 hover:border-zinc-500 transition-colors">
@@ -461,6 +519,20 @@ export function BuilderClient({ initialData }: { initialData: any }) {
                          />
                          <div className="flex-1 text-[11px] text-zinc-400 font-mono flex items-center pl-2">
                            {selectedBlock.data.textColor || "#ffffff"}
+                         </div>
+                       </div>
+                    </div>
+                    <div className="space-y-1.5 pt-1">
+                       <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider text-amber-500">Acento (Laser/Bordes)</label>
+                       <div className="flex h-9 w-full rounded-md border border-zinc-800 bg-black overflow-hidden pr-3 hover:border-zinc-500 transition-colors">
+                         <input 
+                           type="color" 
+                           value={selectedBlock.data.accentColor || "#dc2626"} 
+                           onChange={(e) => updateBlockData(selectedBlock.id, "accentColor", e.target.value)}
+                           className="w-12 h-14 -mt-2 -ml-2 cursor-pointer"
+                         />
+                         <div className="flex-1 text-[11px] text-zinc-400 font-mono flex items-center pl-2">
+                           {selectedBlock.data.accentColor || "#dc2626"}
                          </div>
                        </div>
                     </div>

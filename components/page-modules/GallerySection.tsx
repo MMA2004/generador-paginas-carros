@@ -2,7 +2,7 @@ import { type IPageBlock } from "@/models/Page";
 
 export function GallerySection({ data, template = "luxury_minimal" }: { data: any, template?: string }) {
   const images: string[] = data?.images || [];
-  const { bgColor, textColor } = data || {};
+  const { bgColor, textColor, accentColor } = data || {};
 
   const defaultBg = template === 'classic_maserati' ? '#0a101d' : template === 'sport_dynamic' ? '#09090b' : '#ffffff';
   const defaultText = template === 'luxury_minimal' ? '#000000' : '#ffffff';
@@ -24,11 +24,17 @@ export function GallerySection({ data, template = "luxury_minimal" }: { data: an
 
   // SPORT DYNAMIC
   if (template === "sport_dynamic") {
+    const resolveAccent = accentColor || '#dc2626';
+    const sectionStyle = {
+      ...backgroundStyle,
+      '--accent': resolveAccent
+    } as React.CSSProperties;
+
     return (
-      <section className="w-full py-16" style={backgroundStyle}>
+      <section className="w-full py-16" style={sectionStyle}>
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-2 h-8 bg-red-600 skew-x-12" />
+            <div className="w-2 h-8 bg-[var(--accent)] skew-x-12" />
             <h2 className="text-3xl font-black italic tracking-tighter uppercase" style={{ color: resolveTextColor }}>
               {data.title || "Galería"}
             </h2>
@@ -51,11 +57,11 @@ export function GallerySection({ data, template = "luxury_minimal" }: { data: an
                   
                   {/* Lock-on Corners overlay */}
                   <div className="absolute inset-x-8 inset-y-8 border border-white/0 group-hover:border-white/10 transition-colors pointer-events-none z-10 hidden md:block" />
-                  <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-red-600/0 group-hover:border-red-600 transition-colors z-20" />
-                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-red-600/0 group-hover:border-red-600 transition-colors z-20" />
+                  <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-transparent group-hover:border-[var(--accent)] transition-colors z-20" />
+                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-transparent group-hover:border-[var(--accent)] transition-colors z-20" />
                   
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-                  <div className="absolute inset-0 bg-red-900/0 transition-colors group-hover:bg-red-900/20 mix-blend-overlay" />
+                  <div className="absolute inset-0 bg-[var(--accent)] opacity-0 group-hover:opacity-20 transition-opacity mix-blend-overlay pointer-events-none" />
                 </div>
               );
             })}
