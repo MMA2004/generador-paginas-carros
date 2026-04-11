@@ -1,12 +1,23 @@
 import { type IPageBlock } from "@/models/Page";
 import { HeroSection } from "./HeroSection";
-// We will add more imports here
+import { GallerySection } from "./GallerySection";
+import { SpecsSection } from "./SpecsSection";
+import { PricingSection } from "./PricingSection";
+import { ColorsSection } from "./ColorsSection";
+import { FeatureSection } from "./FeatureSection";
+import { VideoSection } from "./VideoSection";
 
-const componentsMap: Record<string, React.FC<{ data: any }>> = {
+const componentsMap: Record<string, React.FC<{ data: any, template?: string }>> = {
   "HeroSection": HeroSection,
+  "GallerySection": GallerySection,
+  "SpecsSection": SpecsSection,
+  "PricingSection": PricingSection,
+  "ColorsSection": ColorsSection,
+  "FeatureSection": FeatureSection,
+  "VideoSection": VideoSection,
 };
 
-export function ModuleRenderer({ blocks }: { blocks: IPageBlock[] }) {
+export function ModuleRenderer({ blocks, template }: { blocks: IPageBlock[], template?: string }) {
   // Sort blocks by order
   const sortedBlocks = [...blocks].sort((a, b) => a.order - b.order);
 
@@ -23,7 +34,7 @@ export function ModuleRenderer({ blocks }: { blocks: IPageBlock[] }) {
           );
         }
 
-        return <Component key={block.id} data={block.data} />;
+        return <Component key={block.id} data={block.data} template={template} />;
       })}
     </div>
   );

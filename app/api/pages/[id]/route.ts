@@ -13,14 +13,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   try {
     const body = await req.json();
-    const { blocks } = body;
+    const { blocks, template } = body;
 
     await dbConnect();
 
     const page = await Page.findOneAndUpdate(
       { _id: id, userId },
-      { blocks },
-      { new: true }
+      { blocks, template },
+      { returnDocument: 'after' }
     );
 
     if (!page) {

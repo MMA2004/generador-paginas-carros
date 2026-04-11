@@ -32,6 +32,7 @@ export default async function BuilderPage({ params }: { params: Promise<{ id: st
     brand: page.brand,
     slug: page.slug,
     blocks: page.blocks,
+    template: page.template,
     published: page.published
   };
 

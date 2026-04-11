@@ -12,6 +12,7 @@ export interface IPage extends Document {
   brand: string; // e.g. "toyota"
   slug: string; // e.g. "corolla-2024"
   title: string; // Internal title for the dashboard
+  template: string; // "luxury_minimal", "sport_dynamic", "classic_maserati"
   published: boolean;
   blocks: IPageBlock[];
   createdAt: Date;
@@ -31,6 +32,7 @@ const PageSchema: Schema = new Schema(
     brand: { type: String, required: true, lowercase: true, trim: true },
     slug: { type: String, required: true, lowercase: true, trim: true },
     title: { type: String, required: true },
+    template: { type: String, default: "luxury_minimal" },
     published: { type: Boolean, default: false },
     blocks: [PageBlockSchema],
   },

@@ -49,7 +49,7 @@ export default async function PublicDynamicPage({ params }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white w-full overflow-x-hidden m-0 p-0">
-      <ModuleRenderer blocks={page.blocks} />
+      <ModuleRenderer blocks={page.blocks} template={page.template} />
     </div>
   );
 }
