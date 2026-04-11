@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/mongodb";
 import Page from "@/models/Page";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -19,6 +19,18 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
+
+    // --- Verificación de Quota Financiera ---
+    const user = await currentUser();
+    const role = user?.publicMetadata?.role as string;
+    const quota = (user?.publicMetadata?.pageQuota as number) || 0;
+    
+    if (role !== "admin") {
+       const existingPagesCount = await Page.countDocuments({ userId });
+       if (existingPagesCount >= quota) {
+          return NextResponse.json({ error: `Límite de páginas agotado (${existingPagesCount}/${quota}). Contacta soporte para ampliar tu plan.` }, { status: 402 });
+       }
+    }
 
     // Check if brand/slug already exists
     const existing = await Page.findOne({ brand, slug });

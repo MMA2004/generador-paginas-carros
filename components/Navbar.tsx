@@ -1,8 +1,12 @@
-import { UserButton } from "@clerk/nextjs";
+"use client";
+
+import { UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, ShieldCheck } from "lucide-react";
 
 export function Navbar() {
+  const { user } = useUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -21,6 +25,12 @@ export function Navbar() {
               <LayoutDashboard size={16} />
               Dashboard
             </Link>
+            {isAdmin && (
+               <Link href="/admin" className="flex items-center gap-2 text-red-500 hover:text-red-400 transition-colors bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20">
+                 <ShieldCheck size={16} />
+                 Admin
+               </Link>
+            )}
           </nav>
         </div>
 

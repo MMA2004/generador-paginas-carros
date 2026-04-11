@@ -46,6 +46,12 @@ export default async function Home() {
           </Link>
         </div>
       </main>
+
+      <footer className="absolute bottom-8 w-full text-center z-20 pointer-events-none">
+        <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-zinc-600">
+          Powered by <span className="text-zinc-200">GIBRA</span>
+        </p>
+      </footer>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import Link from "next/link";
 export default function NewPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     brand: "",
@@ -18,6 +19,7 @@ export default function NewPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
     try {
       const res = await fetch("/api/pages", {
@@ -27,13 +29,18 @@ export default function NewPage() {
       });
 
       if (!res.ok) {
-        throw new Error(await res.text());
+        let errDesc = "Error al crear la página. Asegúrate de que no haya URLs repetidas.";
+        try {
+           const errPayload = await res.json();
+           if (errPayload.error) errDesc = errPayload.error;
+        } catch { }
+        throw new Error(errDesc);
       }
 
       const data = await res.json();
       router.push(`/builder/${data.pageId}`);
-    } catch (error) {
-      alert("Error al crear la página. Asegúrate de que el slug no esté repetido o contenga espacios inválidos.");
+    } catch (error: any) {
+      setErrorMsg(error.message);
       setLoading(false);
     }
   };
@@ -51,6 +58,13 @@ export default function NewPage() {
             <h1 className="text-3xl font-bold tracking-tight">Crear Página</h1>
             <p className="text-sm text-zinc-400 mt-2">Configura los detalles básicos de la nueva URL del vehículo.</p>
           </div>
+
+          {errorMsg && (
+            <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm font-medium flex gap-3">
+               <div>⚠️</div>
+               <div>{errorMsg}</div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
